@@ -2,6 +2,9 @@ import axios from 'axios';
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import "../css/login.css"
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 const Login = (props) => {
     const navigate = useNavigate();
     const signup = () => {
@@ -17,7 +20,7 @@ const Login = (props) => {
             password: password
         }
         try {
-            const res = await axios.post("http://localhost:8080/login", data, {
+            const res = await axios.post(`${API_BASE}/login`, data, {
                 headers: {
                     "Content-Type": "application/json",
                 }
@@ -25,6 +28,7 @@ const Login = (props) => {
             const resp = await res.data
             console.log(resp)
             if (resp.authtoken) {
+                localStorage.setItem("token", resp.authtoken);
                 props.setMessage("Welcome to SymbiMart, Please wait while we are tranfering you to home");
                 setTimeout(() => {
                     props.setMessage(null)
@@ -34,7 +38,7 @@ const Login = (props) => {
             }
         } catch (error) {
             console.log(error)
-            props.setMessage(error.response.data.error);
+            props.setMessage(error.response?.data?.error || "Something went wrong, please try again.");
                 setTimeout(() => {
                     props.setMessage(null)
                 }, 3000);

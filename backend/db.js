@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
 
-const MongoURI = "mongodb+srv://pateljeel3105:WiuNQCCFF3iyJFj0@symbimart.zua6hsz.mongodb.net/?retryWrites=true&w=majority&appName=symbimart";
+const MongoURI = process.env.MONGO_URI;
 
 const connect = () => {
-  mongoose.connect(MongoURI, () => {
-    console.log("Connected to mongo successfully");
-  });
-};
+  if (!MongoURI) {
+    throw new Error("MONGO_URI is not set. Copy .env.example to .env and fill it in.");
+  }
 
-if (!connect) {
-  console.log("Not connected to mongo");
-}
+  mongoose
+    .connect(MongoURI)
+    .then(() => console.log("Connected to mongo successfully"))
+    .catch((err) => console.error("Failed to connect to mongo:", err.message));
+};
 
 module.exports = connect;

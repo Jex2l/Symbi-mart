@@ -2,13 +2,16 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import "../css/sign-up.css"
 import axios from "axios"
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 const Signup = (props) => {
     const navigate = useNavigate();
     const signin = () => {
         navigate("/login")
     }
     const onSignup = async (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         const name = document.getElementById("signup-name").value;
         const email = document.getElementById("signup-email").value;
         const password = document.getElementById("signup-password").value;
@@ -19,7 +22,7 @@ const Signup = (props) => {
         }
         console.log(data)
         try {
-            const res = await axios.post("http://localhost:8080/signup", data, {
+            const res = await axios.post(`${API_BASE}/signup`, data, {
                 headers: {
                     "Content-Type": "application/json",
                 }
@@ -35,7 +38,7 @@ const Signup = (props) => {
 
             }
         } catch (error) {
-            props.setMessage(error.response.data.error);
+            props.setMessage(error.response?.data?.error || "Something went wrong, please try again.");
                 setTimeout(() => {
                     props.setMessage(null)
                 }, 3000);
